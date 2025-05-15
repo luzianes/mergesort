@@ -63,7 +63,7 @@ int* ler_vetor_do_arquivo(const char* nome_arquivo, int* tamanho) {
     // Aloca memória para o vetor
     int* vetor = malloc(*tamanho * sizeof(int));
     if (vetor == NULL) {
-        printf("Erro de alocação de memória\n");
+        printf("Erro de alocacao de memoria\n");
         fclose(arquivo);
         return NULL;
     }
@@ -133,7 +133,7 @@ int main() {
         // Mede tempo de execução
         double tempo = medir_tempo_execucao(vetor, tamanho);
         
-        printf("Tempo de execução: %f segundos\n", tempo);
+        printf("Tempo de execucao: %f segundos\n", tempo);
 
         // Libera memória
         free(vetor);
