@@ -1,8 +1,10 @@
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+import os
+import time
 
-def gerar_entrada_aleatoria(tamanho, limite_inferior=0, limite_superior=1000):
+def gerar_entrada_aleatoria(tamanho, limite_inferior=0, limite_superior=1000000):
     """
     Gera uma lista de números inteiros aleatórios.
     
@@ -11,6 +13,7 @@ def gerar_entrada_aleatoria(tamanho, limite_inferior=0, limite_superior=1000):
     :param limite_superior: Maior valor possível
     :return: Lista de números aleatórios
     """
+    print(f"Gerando lista aleatória com {tamanho} elementos...")
     return [random.randint(limite_inferior, limite_superior) for _ in range(tamanho)]
 
 def gerar_entrada_ordenada(tamanho, ordem='crescente'):
@@ -21,6 +24,7 @@ def gerar_entrada_ordenada(tamanho, ordem='crescente'):
     :param ordem: 'crescente' ou 'decrescente'
     :return: Lista ordenada
     """
+    print(f"Gerando lista {ordem} com {tamanho} elementos...")
     lista = list(range(tamanho))
     return lista if ordem == 'crescente' else list(reversed(lista))
 
@@ -32,6 +36,7 @@ def gerar_entrada_quase_ordenada(tamanho, percentual_desordem=10):
     :param percentual_desordem: Porcentagem de elementos que serão embaralhados
     :return: Lista quase ordenada
     """
+    print(f"Gerando lista quase ordenada com {tamanho} elementos ({percentual_desordem}% em desordem)...")
     lista = list(range(tamanho))
     num_desordenados = int(tamanho * percentual_desordem / 100)
     
@@ -45,19 +50,24 @@ def gerar_entrada_quase_ordenada(tamanho, percentual_desordem=10):
     
     return lista
 
-def gerar_entrada_com_duplicatas(tamanho, num_duplicatas=3):
+def gerar_entrada_com_duplicatas(tamanho, pct_duplicatas=20):
     """
     Gera uma lista com duplicatas.
     
     :param tamanho: Número de elementos na lista
-    :param num_duplicatas: Número de valores que serão repetidos
+    :param pct_duplicatas: Porcentagem de elementos que serão duplicados
     :return: Lista com duplicatas
     """
-    lista = list(range(tamanho - num_duplicatas))
-    duplicatas = [random.choice(lista) for _ in range(num_duplicatas)]
-    lista.extend(duplicatas)
-    random.shuffle(lista)
-    return lista
+    print(f"Gerando lista com {tamanho} elementos ({pct_duplicatas}% duplicatas)...")
+    num_valores_unicos = int(tamanho * (1 - pct_duplicatas/100))
+    lista_base = list(range(num_valores_unicos))
+    
+    # Completa o restante com duplicatas
+    duplicatas = [random.choice(lista_base) for _ in range(tamanho - num_valores_unicos)]
+    lista_final = lista_base + duplicatas
+    random.shuffle(lista_final)
+    
+    return lista_final
 
 def salvar_entrada(lista, nome_arquivo):
     """
@@ -66,28 +76,15 @@ def salvar_entrada(lista, nome_arquivo):
     :param lista: Lista a ser salva
     :param nome_arquivo: Nome do arquivo de saída
     """
+    print(f"Salvando arquivo: {nome_arquivo}")
     with open(nome_arquivo, 'w') as f:
-        f.write('\n'.join(map(str, lista)))
-
-def visualizar_distribuicao(lista, titulo='Distribuição dos Dados'):
-    """
-    Cria um histograma da distribuição dos dados.
-    
-    :param lista: Lista de números
-    :param titulo: Título do gráfico
-    """
-    plt.figure(figsize=(10, 6))
-    plt.hist(lista, bins='auto', edgecolor='black')
-    plt.title(titulo)
-    plt.xlabel('Valor')
-    plt.ylabel('Frequência')
-    plt.tight_layout()
-    plt.savefig(f'{titulo.replace(" ", "_")}.png')
-    plt.close()
+        for num in lista:
+            f.write(f"{num}\n")
+    print(f"Arquivo {nome_arquivo} salvo com sucesso!")
 
 def main():
-    # Tamanhos de entrada para teste
-    tamanhos = [100, 1000, 10000]
+    # Tamanhos de entrada para teste - modificados para 10000, 50000, 100000
+    tamanhos = [10000, 50000, 100000]
     
     # Gera diferentes tipos de entradas
     tipos_entradas = [
@@ -101,17 +98,25 @@ def main():
     # Gera e salva entradas
     for tamanho in tamanhos:
         for nome, gerador in tipos_entradas:
-            # Gera entrada
-            entrada = gerador(tamanho)
-            
-            # Salva entrada em arquivo
             nome_arquivo = f'entrada_{nome}_{tamanho}.txt'
-            salvar_entrada(entrada, nome_arquivo)
             
-            # Visualiza distribuição
-            visualizar_distribuicao(entrada, f'Distribuição {nome} {tamanho}')
+            # Verifica se o arquivo já existe para evitar regeneração
+            if os.path.exists(nome_arquivo):
+                print(f"Arquivo {nome_arquivo} já existe, pulando...")
+                continue
             
-            print(f'Gerado: {nome_arquivo}')
+            # Gera entrada
+            try:
+                inicio = time.time()
+                entrada = gerador(tamanho)
+                
+                # Salva entrada em arquivo
+                salvar_entrada(entrada, nome_arquivo)
+                
+                fim = time.time()
+                print(f"Tempo para gerar e salvar {nome_arquivo}: {fim - inicio:.2f} segundos")
+            except Exception as e:
+                print(f"Erro ao gerar {nome_arquivo}: {e}")
 
 if __name__ == '__main__':
     main()
