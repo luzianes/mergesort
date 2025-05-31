@@ -62,15 +62,14 @@ def gerar_graficos(linguagem="c"):
             nomes_curtos = [nomes_tipos.get(tipo, tipo) for tipo in dados_tamanho['Tipo']]
             
             # Criar barras com tempos médios
-            barras = axs[i].bar(nomes_curtos, dados_tamanho['Media_Tempo(s)'], width, 
-                               yerr=dados_tamanho['Desvio_Padrao(s)'], 
-                               capsize=5)
+            barras = axs[i].bar(nomes_curtos, dados_tamanho['Media_Tempo(s)'], width)
             
-            # Adicionar rótulos de valor nas barras
-            for barra in barras:
+            # Adicionar rótulos de valor nas barras COM desvio padrão
+            for j, barra in enumerate(barras):
                 altura = barra.get_height()
+                desvio = dados_tamanho['Desvio_Padrao(s)'].iloc[j]
                 axs[i].text(barra.get_x() + barra.get_width()/2., altura + 0.0005,
-                           f'{altura:.5f}',
+                           f'{altura:.5f}\n±{desvio:.5f}',
                            ha='center', va='bottom', fontsize=8, rotation=0)
             
             axs[i].set_title(f'Tamanho: {tamanho}')
@@ -157,22 +156,20 @@ def gerar_graficos(linguagem="c"):
             
             plt.subplot(len(tipos_unicos), 1, i+1)
             barras = plt.bar(df_tipo['Tamanho'].astype(str), df_tipo['Media_Tempo(s)'], 
-                           width=0.7,
-                           yerr=df_tipo['Desvio_Padrao(s)'], 
-                           capsize=5)
+                           width=0.7)
             
             # Adicionar rótulos de valores nas barras
-            for barra in barras:
+            for j, barra in enumerate(barras):
                 altura = barra.get_height()
+                desvio = df_tipo['Desvio_Padrao(s)'].iloc[j]
                 plt.text(barra.get_x() + barra.get_width()/2., altura + altura*0.01,
-                       f'{altura:.5f}s',
-                       ha='center', va='bottom', fontsize=8)
+                        f'{altura:.5f}s\n±{desvio:.5f}s',
+                        ha='center', va='bottom', fontsize=8)
             
             plt.ylabel('Tempo (s)', fontsize=10)
             plt.title(f'Tipo: {nomes_tipos.get(tipo, tipo)}{titulo_linguagem}', fontsize=12)
             plt.grid(axis='y', linestyle='--', alpha=0.7)
             
-            # Ajustar os rótulos do eixo x para evitar sobreposição
             plt.xticks(fontsize=10)
             
             # Adicionar uma linha de tendência suave

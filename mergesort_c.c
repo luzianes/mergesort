@@ -4,7 +4,7 @@
 #include <string.h>
 #include <math.h>  // Para cálculo do desvio padrão
 
-// Função de intercalação (mantida igual)
+// Função de intercalação
 void intercalar(int inicio, int meio, int fim, int v[]) {
     int inicio_v01 = inicio;
     int inicio_v02 = meio + 1;
@@ -34,7 +34,7 @@ void intercalar(int inicio, int meio, int fim, int v[]) {
     free(aux);
 }
 
-// Função merge sort (mantida igual)
+// Função merge sort
 void mergesort(int inicio, int fim, int v[]) {
     if (inicio < fim) {
         int meio = (inicio + fim) / 2;
@@ -144,14 +144,14 @@ int main() {
     int num_arquivos = sizeof(arquivos) / sizeof(arquivos[0]);
     int num_execucoes = 30;  // Número de execuções: 30
 
-    // Cria arquivo CSV para resultados detalhados - NOME MODIFICADO
+    // Cria arquivo CSV para resultados detalhados
     FILE* resultado_csv = fopen("resultados_mergesort_c_detalhado.csv", "w");
     if (resultado_csv == NULL) {
         printf("Erro ao criar arquivo de resultados CSV\n");
         return 1;
     }
     
-    // Cria arquivo CSV para os tempos individuais de cada execução - NOME MODIFICADO
+    // Cria arquivo CSV para os tempos individuais de cada execução
     FILE* tempos_individuais_csv = fopen("tempos_individuais_mergesort_c.csv", "w");
     if (tempos_individuais_csv == NULL) {
         printf("Erro ao criar arquivo de tempos individuais CSV\n");

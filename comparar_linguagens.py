@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Função para carregar dados dos resultados - NOMES MODIFICADOS
+# Função para carregar dados dos resultados
 def carregar_dados(arquivo_c='resultados_mergesort_c_detalhado.csv', 
                    arquivo_python='resultados_mergesort_python_detalhado.csv'):
     try:
@@ -42,17 +42,14 @@ def comparar_c_python(df_c, df_python):
         df_c_tipo = df_tipo[df_tipo['Linguagem'] == 'C']
         df_python_tipo = df_tipo[df_tipo['Linguagem'] == 'Python']
         
-        # Plotar barras
         ax = axes[i] if len(tipos) > 1 else axes
         x = np.arange(len(tamanhos))
         width = 0.35
         
         rects1 = ax.bar(x - width/2, df_c_tipo.sort_values('Tamanho')['Media_Tempo(s)'], 
-                        width, label='C', yerr=df_c_tipo.sort_values('Tamanho')['Desvio_Padrao(s)'],
-                        capsize=5)
+                        width, label='C')
         rects2 = ax.bar(x + width/2, df_python_tipo.sort_values('Tamanho')['Media_Tempo(s)'], 
-                        width, label='Python', yerr=df_python_tipo.sort_values('Tamanho')['Desvio_Padrao(s)'],
-                        capsize=5)
+                        width, label='Python')
         
         # Adicionar labels e títulos
         ax.set_xlabel('Tamanho da Entrada')
@@ -63,18 +60,21 @@ def comparar_c_python(df_c, df_python):
         ax.legend()
         ax.grid(axis='y', linestyle='--', alpha=0.7)
         
-        # Adicionar valores nas barras
-        def autolabel(rects):
-            for rect in rects:
-                height = rect.get_height()
-                ax.annotate(f'{height:.4f}',
-                            xy=(rect.get_x() + rect.get_width() / 2, height),
-                            xytext=(0, 3),  # 3 pts vertical offset
-                            textcoords="offset points",
-                            ha='center', va='bottom', rotation=90)
+        # Função para adicionar valores nas barras COM desvio padrão no texto
+        def autolabel(rects, desvios):
+            for j, rect in enumerate(rects):
+                altura = rect.get_height()
+                desvio = desvios.iloc[j]
+                # Mostra: tempo médio ± desvio padrão
+                ax.annotate(f'{altura:.4f}\n±{desvio:.4f}',
+                           xy=(rect.get_x() + rect.get_width() / 2, altura),
+                           xytext=(0, 3),
+                           textcoords="offset points",
+                           ha='center', va='bottom', fontsize=8)
         
-        autolabel(rects1)
-        autolabel(rects2)
+        # Chamar autolabel passando os desvios corretos
+        autolabel(rects1, df_c_tipo.sort_values('Tamanho')['Desvio_Padrao(s)'])
+        autolabel(rects2, df_python_tipo.sort_values('Tamanho')['Desvio_Padrao(s)'])
     
     plt.tight_layout()
     plt.savefig('comparacao_c_vs_python.png')
@@ -121,10 +121,7 @@ def calcular_speedup(df_c, df_python):
     plt.xticks(index + bar_width*(len(tipos)-1)/2, tamanhos)
     plt.legend()
     plt.grid(axis='y', linestyle='--', alpha=0.7)
-    
-    # Linha de referência para speedup = 1 (mesma velocidade)
-    plt.axhline(y=1, color='r', linestyle='--', alpha=0.3)
-    
+       
     plt.tight_layout()
     plt.savefig('speedup_python_vs_c.png')
     plt.close()
