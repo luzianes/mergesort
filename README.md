@@ -110,9 +110,9 @@ Este projeto foi desenvolvido para a disciplina **Teoria da Computação** como 
 
 ## 👥 Equipe
 
-- Lisa Matubara
-- Luziane Santos
-
+- [@lilymtbr](https://github.com/lilymtbr) - Lisa Matubara
+- [@luzianes](https://github.com/luzianes) - Luziane Santos
+  
 ## 📝 Licença
 
 Este projeto é para fins educacionais como parte do curso de Teoria da Computação.
@@ -120,5 +120,5 @@ Este projeto é para fins educacionais como parte do curso de Teoria da Computa�
 ---
 
 **Data**: 01 Julho 2025  
-**Instituição**: CESAR School
+**Instituição**: CESAR School  
 **Disciplina**: Teoria da Computação
